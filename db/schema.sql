@@ -1,4 +1,4 @@
--- DROP DATABASE IF EXISTS employer_tracker_db
+DROP DATABASE IF EXISTS employer_tracker_db;
 CREATE DATABASE employer_tracker_db;
 
 USE employer_tracker_db;
@@ -13,7 +13,7 @@ CREATE TABLE role (
     title VARCHAR(30),
     salary DECIMAL NOT NULL,
     department_id int,
-    FOREIGN KEY deparment_id REFERENCES department(id)
+    FOREIGN KEY (department_id) REFERENCES department(id)
 );
 
 CREATE TABLE employee (
@@ -22,5 +22,5 @@ CREATE TABLE employee (
     last_name VARCHAR(30) NOT NULL,
     role_id INT,
     manager_id INT,
-    FOREIGN KEY role_id REFERENCES role(id)
+    FOREIGN KEY (role_id) REFERENCES role(id)
 );
