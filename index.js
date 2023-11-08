@@ -33,6 +33,9 @@ function startApp() {
             case 'Add a Department':
                 addDepartment()
                 break;
+            case 'Add Employee':
+                addEmployee()
+                break;
         }
 
     })
@@ -66,17 +69,17 @@ async function addRole() {
         [role_title, role_salary, dept_id]
     );
     console.log("The new role was successfully added.");
-    startApp();
+     
 }
 
 async function addDepartment() {
-    const name = await prompt([{
+    const department_name = await prompt([{
         type: "input",
-        name: "name",
+        name: "department_name",
         message: "What is the name of the department you are adding?"
     }])
     await db.query(
-        "INSERT INTO department (name) VALUES (?) ", [name]
+        "INSERT INTO department (department_name) VALUES (?) ", [department_name.department_name]
     );
     console.log('The new department was successfully added');
     startApp();
@@ -84,13 +87,13 @@ async function addDepartment() {
 
 async function addEmployee() {
     let managers = await db.query(
-        "SELECT id as value, CONCAT(first_name, ' ', last_name) as name from employee"
+        "select id as value, concat(first_name,' ',last_name) as name from employee"
     )
-    const roleList = db.query(
-        "SELECT id as value, title as role_name from role,  "
+    let roleList = await db.query(
+        "SELECT id as value, title as name from role  "
     )
     managers = [{ value: null, name: "No manager" }, ...managers];
-    let answers = await db.prompt([
+    let answers = await prompt([
         {
             type: "input",
             name: "firstName",
