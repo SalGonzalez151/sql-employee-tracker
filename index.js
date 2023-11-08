@@ -19,3 +19,5 @@ function startApp() {
             'Quit']
     }]).then(answer)
 }
+
+module.exports = startApp()
