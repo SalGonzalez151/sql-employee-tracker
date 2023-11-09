@@ -8,7 +8,7 @@ const fs = require('fs')
 const utils = require("util");
 db.query = utils.promisify(db.query);
 
-
+//prompt to start the app and the choices provided
 function startApp() {
     inquirer.prompt([{
         type: 'list',
@@ -30,6 +30,7 @@ function startApp() {
             'Delete Employee',
             'Quit']
 
+        // switch statements for all possible choices on the first prompt
     }]).then((answers) => {
         switch (answers.listChoice) {
             case 'Add Role':
@@ -88,6 +89,7 @@ function startApp() {
 
 }
 
+//add a role to the table
 async function addRole() {
     const departments = await db.query(
         "select id as value, name as name from department"
@@ -118,6 +120,7 @@ async function addRole() {
 
 }
 
+//adds a department to the table
 async function addDepartment() {
     const department_name = await prompt([{
         type: "input",
@@ -131,6 +134,7 @@ async function addDepartment() {
     startApp();
 }
 
+//adds an employee to the table
 async function addEmployee() {
     let managers = await db.query(
         "select id as value, concat(first_name,' ',last_name) as name from employee where manager_id is null"
@@ -169,6 +173,8 @@ async function addEmployee() {
     console.log("Employee successfully added")
     startApp();
 }
+
+//updates an employee role
 async function updateEmployeeRole() {
     const roleList = await db.query(
         "SELECT id as value, title as name from role"
@@ -200,6 +206,8 @@ async function updateEmployeeRole() {
     console.log("Employee role has been successfully updated");
     startApp();
 }
+
+//views all departments in the table
 async function viewAllDepartments() {
     const viewDepartments = await db.query(
         "SELECT * FROM department"
@@ -208,6 +216,8 @@ async function viewAllDepartments() {
     console.table(viewDepartments)
     startApp()
 }
+
+//views all roles in the table
 async function viewAllRoles() {
     const viewRoles = await db.query(
         "SELECT role.id, role.title, role.salary, department.department_name from role left join department on department.id = role.department_id"
@@ -216,6 +226,8 @@ async function viewAllRoles() {
     console.table(viewRoles)
     startApp()
 }
+
+//views all employees in the table
 async function viewAllEmployees() {
     const sql = await db.query(`SELECT employee.id, employee.first_name AS "first name", employee.last_name 
                     AS "last name", role.title, department.department_name AS department, role.salary, 
@@ -231,6 +243,7 @@ async function viewAllEmployees() {
     startApp()
 }
 
+//update the manager of the employer
 async function updateManager() {
     const employees = await db.query(
         "select id as value, concat(first_name,' ',last_name) as name from employee where manager_id is not null"
@@ -256,6 +269,7 @@ async function updateManager() {
     startApp();
 }
 
+//view employees by managers
 async function employeeByManager() {
     const results = await db.query(
         `SELECT
@@ -278,6 +292,7 @@ async function employeeByManager() {
     startApp();
 }
 
+//views employees by department
 async function employeeByDepartment() {
     const results = await db.query(
         `SELECT
@@ -303,6 +318,7 @@ async function employeeByDepartment() {
     startApp();
 }
 
+// deletes a department
 async function deleteDepartment() {
     const data = await db.query(
         "SELECT id as value, department_name as name from department"
@@ -322,6 +338,7 @@ async function deleteDepartment() {
     startApp();
 }
 
+//deletes a roll
 async function deleteRole() {
     const data = await db.query(
         "SELECT id as value, title as name from role"
