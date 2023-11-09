@@ -29,13 +29,32 @@ function startApp() {
                 addRole();
                 break;
 
-
             case 'Add a Department':
                 addDepartment()
                 break;
+
             case 'Add Employee':
                 addEmployee()
                 break;
+
+            case "Update Employee Role":
+            updateEmployeeRole();
+            break;
+            case "View all Departments":
+                viewAllDepartments()
+            break;
+
+            case "View all Roles":
+                viewAllRoles()
+            break;
+
+            case "View all Employees":
+                viewAllEmployees()
+            break;
+
+            case "Quit":
+                db.close();
+            break;
         }
 
     })
@@ -69,7 +88,7 @@ async function addRole() {
         [role_title, role_salary, dept_id]
     );
     console.log("The new role was successfully added.");
-     
+
 }
 
 async function addDepartment() {
@@ -87,7 +106,7 @@ async function addDepartment() {
 
 async function addEmployee() {
     let managers = await db.query(
-        "select id as value, concat(first_name,' ',last_name) as name from employee"
+        "select id as value, concat(first_name,' ',last_name) as name from employee where manager_id is null"
     )
     let roleList = await db.query(
         "SELECT id as value, title as name from role  "
@@ -122,7 +141,60 @@ async function addEmployee() {
     )
     console.log("Employee successfully added")
     startApp();
-
 }
+async function updateEmployeeRole() {
+    const roleList = await db.query(
+        "SELECT id as value, title as name from role"
+    );
 
+    const employees = await db.query(
+        "SELECT id as value, CONCAT(first_name, ' ', last_name) as name from employee"
+    );
+
+    const answers = await prompt([
+        {
+            type: "list",
+            name: "employeeId",
+            message: "Pick the employee whose role you want to change: ",
+            choices: employees
+        },
+        {
+            type: "list",
+            name: "roleId",
+            message: "What is the new role of the employee?",
+            choices: roleList
+        }
+    ]);
+
+    await db.query(
+        "UPDATE employee SET role_id = ? WHERE id = ?", [answers.roleId, answers.employeeId]
+    );
+
+    console.log("Employee role has been successfully updated");
+    startApp();
+}
+async function viewAllDepartments() {
+    const viewDepartments = await db.query(
+        "SELECT * FROM department"
+        
+    )
+    console.table(viewDepartments)
+    startApp()
+}
+async function viewAllRoles() {
+    const viewRoles = await db.query(
+        "SELECT * FROM role"
+        
+    )
+    console.table(viewRoles)
+    startApp()
+}
+async function viewAllEmployees() {
+    const viewEmployee = await db.query(
+        "SELECT * FROM employee"
+        
+    )
+    console.table(viewEmployee)
+    startApp()
+}
 startApp();
