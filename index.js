@@ -28,6 +28,7 @@ function startApp() {
             'Delete Department',
             'Delete Role',
             'Delete Employee',
+            'Sum of Salary',
             'Quit']
 
         // switch statements for all possible choices on the first prompt
@@ -78,6 +79,9 @@ function startApp() {
                 break;
             case "Delete Employee":
                 deleteEmployee()
+                break;
+            case "Sum of Salary":
+                sumOfSalary()
                 break;
 
             case "Quit":
@@ -375,6 +379,18 @@ async function deleteEmployee() {
         "DELETE FROM Employee where id = ?", [results.employeeName]
     )
     console.log('Employee deleted');
+    startApp();
+}
+
+//sum of salary of the department
+async function sumOfSalary() {
+    const salary = await db.query(
+        `SELECT department.id, department.department_name, SUM(role.salary) as total_budget
+        FROM department
+        LEFT JOIN role ON department.id = role.department_id
+        GROUP BY department.id, department.department_name`
+    )
+    console.table(salary);
     startApp();
 }
 
