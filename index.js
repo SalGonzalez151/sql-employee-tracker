@@ -22,8 +22,10 @@ function startApp() {
             'View all Roles',
             'Add Role',
             'Add a Department',
+            'Update Manager',
+            'Employees by Manager',
             'Quit']
-            
+
     }]).then((answers) => {
         switch (answers.listChoice) {
             case 'Add Role':
@@ -39,23 +41,27 @@ function startApp() {
                 break;
 
             case "Update Employee Role":
-            updateEmployeeRole();
-            break;
+                updateEmployeeRole();
+                break;
             case "View all Departments":
                 viewAllDepartments()
-            break;
+                break;
 
             case "View all Roles":
                 viewAllRoles()
-            break;
+                break;
 
             case "View all Employees":
                 viewAllEmployees()
-            break;
+                break;
+
+            case "Update Manager":
+                updateManager()
+                break;
 
             case "Quit":
                 db.close();
-            break;
+                break;
         }
 
     })
@@ -177,7 +183,7 @@ async function updateEmployeeRole() {
 async function viewAllDepartments() {
     const viewDepartments = await db.query(
         "SELECT * FROM department"
-        
+
     )
     console.table(viewDepartments)
     startApp()
@@ -185,7 +191,7 @@ async function viewAllDepartments() {
 async function viewAllRoles() {
     const viewRoles = await db.query(
         "SELECT role.id, role.title, role.salary, department.department_name from role left join department on department.id = role.department_id"
-        
+
     )
     console.table(viewRoles)
     startApp()
@@ -203,5 +209,34 @@ async function viewAllEmployees() {
                     ON manager.id = employee.manager_id` )
     console.table(sql)
     startApp()
+}
+
+async function updateManager() {
+    const employees = await db.query(
+        "select id as value, concat(first_name,' ',last_name) as name from employee where manager_id is not null"
+    )
+    const managers = await db.query("select id as value, concat(first_name,' ',last_name) as name from employee where manager_id is null")
+    const employee = await prompt([
+        {
+            type: "list",
+            name: "employeeName",
+            message: "Choose the employee whose manager you want to change:",
+            choices: employees
+        }, {
+            type: "list",
+            name: "managerName",
+            message: "Choose the new manager for the employee:",
+            choices: managers
+        }
+    ])
+    await db.query(
+        "UPDATE employee set manager_id = ? where id = ?", [employee.managerName, employee.employeeName]
+    )
+    console.log("updated manager");
+    startApp();
+}
+
+async function employeeByManager() {
+    const managers = await db.query("select id as value, concat(first_name,' ',last_name) as name from employee where manager_id is null")
 }
 startApp();
