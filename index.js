@@ -23,6 +23,7 @@ function startApp() {
             'Add Role',
             'Add a Department',
             'Quit']
+            
     }]).then((answers) => {
         switch (answers.listChoice) {
             case 'Add Role':
@@ -183,18 +184,24 @@ async function viewAllDepartments() {
 }
 async function viewAllRoles() {
     const viewRoles = await db.query(
-        "SELECT * FROM role"
+        "SELECT role.id, role.title, role.salary, department.department_name from role left join department on department.id = role.department_id"
         
     )
     console.table(viewRoles)
     startApp()
 }
 async function viewAllEmployees() {
-    const viewEmployee = await db.query(
-        "SELECT * FROM employee"
-        
-    )
-    console.table(viewEmployee)
+    const sql = await db.query(`SELECT employee.id, employee.first_name AS "first name", employee.last_name 
+                    AS "last name", role.title, department.department_name AS department, role.salary, 
+                    concat(manager.first_name, " ", manager.last_name) AS manager
+                    FROM employee
+                    LEFT JOIN role
+                    ON employee.role_id = role.id
+                    LEFT JOIN department
+                    ON role.department_id = department.id
+                    LEFT JOIN employee manager
+                    ON manager.id = employee.manager_id` )
+    console.table(sql)
     startApp()
 }
 startApp();
