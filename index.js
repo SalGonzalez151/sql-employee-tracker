@@ -27,6 +27,7 @@ function startApp() {
             'Employees by Department',
             'Delete Department',
             'Delete Role',
+            'Delete Employee',
             'Quit']
 
     }]).then((answers) => {
@@ -73,6 +74,9 @@ function startApp() {
                 break;
             case "Delete Role":
                 deleteRole()
+                break;
+            case "Delete Employee":
+                deleteEmployee()
                 break;
 
             case "Quit":
@@ -337,5 +341,24 @@ async function deleteRole() {
     startApp();
 }
 
+//delete employee function
+async function deleteEmployee() {
+    const data = await db.query(
+        "SELECT id as value, CONCAT(employee.first_name, ' ', employee.last_name) AS name from employee"
+    );
+    const results = await prompt([
+        {
+            type:"list",
+            name:"employeeName",
+            message:"Which Employee do you want to remove?",
+            choices: data
+        }
+    ])
+    await db.query(
+        "DELETE FROM Employee where id = ?", [results.employeeName]
+    )
+    console.log('Employee deleted');
+    startApp();
+}
 
 startApp();
