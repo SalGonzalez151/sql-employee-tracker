@@ -24,6 +24,8 @@ function startApp() {
             'Add a Department',
             'Update Manager',
             'Employees by Manager',
+            'Employees by Department',
+            'Delete Department',
             'Quit']
 
     }]).then((answers) => {
@@ -57,6 +59,16 @@ function startApp() {
 
             case "Update Manager":
                 updateManager()
+                break;
+
+            case "Employees by Manager":
+                employeeByManager()
+                break;
+            case "Employees by Department":
+                employeeByDepartment()
+                break;
+            case "Delete Department":
+                deleteDepartment()
                 break;
 
             case "Quit":
@@ -237,6 +249,68 @@ async function updateManager() {
 }
 
 async function employeeByManager() {
-    const managers = await db.query("select id as value, concat(first_name,' ',last_name) as name from employee where manager_id is null")
+    const results = await db.query(
+        `SELECT
+            m.id AS manager_id,
+            CONCAT(m.first_name, ' ', m.last_name) AS manager_name,
+            e.id AS employee_id,
+            CONCAT(e.first_name, ' ', e.last_name) AS employee_name
+        FROM
+            employee AS m
+        LEFT JOIN
+            employee AS e
+        ON
+            m.id = e.manager_id
+        WHERE
+            e.manager_id IS NOT NULL
+        ORDER BY
+            manager_id, employee_id;`
+    )
+    console.table(results);
+    startApp();
+}
+
+async function employeeByDepartment() {
+    const results = await db.query(
+        `SELECT
+            d.id AS department_id,
+            d.department_name,
+            e.id AS employee_id,
+            CONCAT(e.first_name, ' ', e.last_name) AS employee_name,
+            r.title as employee_role
+        FROM
+            department AS d
+        LEFT JOIN
+            role AS r
+        ON
+            d.id = r.department_id
+        LEFT JOIN
+            employee AS e
+        ON
+            r.id = e.role_id
+        ORDER BY
+            department_id, employee_id`
+    )
+    console.table(results);
+    startApp();
+}
+
+async function deleteDepartment() {
+    const data = await db.query(
+        "SELECT id as value, department_name as name from department"
+    );
+    const results = await prompt([
+        {
+            type:"list",
+            name:"departmentName",
+            message:"Which department do you want to remove?",
+            choices: data
+        }
+    ])
+    await db.query(
+        "DELETE FROM department where id = ?", [results.departmentName]
+    )
+    console.log('department deleted');
+    startApp();
 }
 startApp();
