@@ -1,3 +1,4 @@
+-- insterts into department table
 INSERT INTO
     department (department_name)
 VALUES
@@ -6,6 +7,7 @@ VALUES
     ('Legal'),
     ('Sales');
 
+-- insterts into role table
 INSERT INTO
     role (title, salary, department_id)
 VALUES
@@ -18,6 +20,7 @@ VALUES
     ('Legal Team Lead', 250000, 3),
     ('Lawyer', 190000, 3);
 
+-- insterts into employee table
 INSERT INTO
     employee (
         first_name,

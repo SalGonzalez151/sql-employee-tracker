@@ -329,9 +329,9 @@ async function deleteDepartment() {
     );
     const results = await prompt([
         {
-            type:"list",
-            name:"departmentName",
-            message:"Which department do you want to remove?",
+            type: "list",
+            name: "departmentName",
+            message: "Which department do you want to remove?",
             choices: data
         }
     ])
@@ -349,9 +349,9 @@ async function deleteRole() {
     );
     const results = await prompt([
         {
-            type:"list",
-            name:"roleName",
-            message:"Which role do you want to remove?",
+            type: "list",
+            name: "roleName",
+            message: "Which role do you want to remove?",
             choices: data
         }
     ])
@@ -369,9 +369,9 @@ async function deleteEmployee() {
     );
     const results = await prompt([
         {
-            type:"list",
-            name:"employeeName",
-            message:"Which Employee do you want to remove?",
+            type: "list",
+            name: "employeeName",
+            message: "Which Employee do you want to remove?",
             choices: data
         }
     ])
@@ -394,4 +394,5 @@ async function sumOfSalary() {
     startApp();
 }
 
+// starts the app
 startApp();
