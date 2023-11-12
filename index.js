@@ -96,7 +96,7 @@ function startApp() {
 //add a role to the table
 async function addRole() {
     const departments = await db.query(
-        "select id as value, name as name from department"
+        "select id as value, department_name as name from department"
     );
     const { role_title, role_salary, dept_id } = await prompt([
         {
@@ -121,6 +121,7 @@ async function addRole() {
         [role_title, role_salary, dept_id]
     );
     console.log("The new role was successfully added.");
+    startApp();
 
 }
 
